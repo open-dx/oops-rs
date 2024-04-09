@@ -11,5 +11,5 @@ Warning: Until published to the registry, DO NOT USE THIS CRATE. It's guaranteed
 Demonstrates the most basic usage possible for all features.
 
 ```sh
-cargo run --example simple --features debug
+cargo run --example simple
 ```
