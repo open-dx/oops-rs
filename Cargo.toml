@@ -1,0 +1,15 @@
+[package]
+name = "oops"
+version = "0.0.0"
+edition = "2021"
+
+# TODO: Remove this when we're ready to publish.
+publish = false
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "1.0"
+quote = "1.0"
+proc-macro2 = "1.0.51"
