@@ -24,10 +24,10 @@ required-features = ["macros", "debug"]
 [dependencies]
 
 [dependencies.oops-core]
-path = "./crates/core"
+path = "./core"
 
 [dependencies.oops-macros]
-path = "./crates/macros"
+path = "./macros"
 optional = true
 
 [dependencies.tracing]
