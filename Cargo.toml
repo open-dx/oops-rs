@@ -6,10 +6,39 @@ edition = "2021"
 # TODO: Remove this when we're ready to publish.
 publish = false
 
-[lib]
-proc-macro = true
+[features]
+default = ["debug", "macros"]
+debug = ["tracing", "oops-core/debug", "oops-macros/debug"]
+verbose = ["oops-core/verbose", "oops-macros/verbose"]
+macros = ["oops-macros"]
 
+#--
+[lib]
+
+#--
+[[example]]
+name = "simple"
+required-features = ["macros", "debug"]
+
+#--
 [dependencies]
-syn = "1.0"
-quote = "1.0"
-proc-macro2 = "1.0.51"
+
+[dependencies.oops-core]
+path = "./crates/core"
+
+[dependencies.oops-macros]
+path = "./crates/macros"
+optional = true
+
+[dependencies.tracing]
+version = "0.1"
+default-features = false
+optional = true
+features = [
+    "log",
+    "log-always",
+    "attributes",
+    "tracing-attributes",
+    "max_level_trace",
+    "release_max_level_warn",
+]
