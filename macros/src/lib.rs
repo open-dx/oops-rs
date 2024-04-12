@@ -20,7 +20,7 @@ use syn::Meta;
 /// ```rust
 /// #[derive(Error)]
 /// enum SomeError {
-///     /// This comment will be used as this
+///     /// This comment will be used for formatting with
 ///     /// variant's interpolation values: {0:?}
 ///     FailedSomehow(String),
 /// }

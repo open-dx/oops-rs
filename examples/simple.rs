@@ -16,6 +16,7 @@ pub enum DependencyError {
     
     /// Failed to read the specified f*9/+ile.
     /// The PathBuf refers to the path used to lookup the file.
+    /// #[msg("failed to read file {0:?}")]
     #[msg="failed to read file {0:?}"]
     FileReadError(PathBuf),
     
@@ -24,8 +25,8 @@ pub enum DependencyError {
     InvalidFileFormat,
     
     /// Something else is wrong, but not sure what.
-    #[msg="a generic error occurred"]
-    GenericError,
+    #[msg="an unknown error occurred"]
+    UnknownError,
 }
 
 //---
@@ -47,10 +48,12 @@ fn process_file(path: &str) -> Result<bool, DependencyError> {
 //---
 /// TODO
 fn main() -> Result<ExitCode, DependencyError> {
-    // This file doesn't exist, so we'll fail gracefully..
-    process_file("test.txt")
-        .map(|content| {
-            println!("Content: {}", content);
-            ExitCode::SUCCESS
-        })
+    // This file doesn't exist, so we'll fail gracefully ..
+    let content = process_file("test.txt")?;
+        // .or_else(oops::nvmd!(DependencyError::UnknownError))?;
+    
+    // We shoulnd't get to this point. if you see this in the terminal,
+    // the example is broken and you should file a report.
+    println!("Content: {}", content);
+    Ok(ExitCode::SUCCESS)
 }

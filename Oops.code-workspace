@@ -1,8 +1,11 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"name": "Oops",
+			"path": ".",
 		}
 	],
-	"settings": {}
+	"settings": {
+		//..
+	}
 }

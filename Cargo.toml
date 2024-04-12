@@ -1,5 +1,5 @@
 [package]
-name = "oops"
+name = "oops-rs"
 version = "0.0.0"
 edition = "2021"
 
@@ -14,6 +14,8 @@ macros = ["oops-macros"]
 
 #--
 [lib]
+name = "oops"
+path = "./src/lib.rs"
 
 #--
 [[example]]
