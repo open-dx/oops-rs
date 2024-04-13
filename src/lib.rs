@@ -10,5 +10,8 @@ extern crate oops_macros;
 pub use oops_macros::Error;
 
 //--
-pub mod nah;
-pub use crate::nah::*;
+#[macro_use]
+pub mod nvmd;
+
+#[macro_use]
+pub mod welp;
