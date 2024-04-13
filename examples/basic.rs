@@ -16,8 +16,8 @@ pub enum DependencyError {
     #[msg="invalid file format"]
     InvalidFileFormat,
     
-    /// Something else is wrong, but not sure what: {:}.
-    #[msg="a config error occurred; {:}"]
+    /// Something else is wrong, but not sure what.
+    #[msg="config error; {:}"]
     ConfigError(ConfigError),
     
     /// Something else is wrong, but not sure what.
