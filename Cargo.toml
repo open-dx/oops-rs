@@ -19,7 +19,7 @@ path = "./src/lib.rs"
 
 #--
 [[example]]
-name = "basic"
+name = "oops-basic"
 path = "./examples/basic.rs"
 required-features = ["macros", "debug"]
 

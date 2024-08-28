@@ -1,5 +1,3 @@
-#![feature(error_in_core)]
-
 use std::path::{PathBuf, Path};
 use std::process::ExitCode;
 
@@ -9,23 +7,23 @@ use std::process::ExitCode;
 pub enum DependencyError {
     /// The requested file wasn't found.
     /// The PathBuf refers to the file requested.
-    #[msg="file not found at path {0:?}"]
+    #[msg("file not found at path {0:?}")]
     FileNotFound(PathBuf),
     
     /// The provided file format was invalid.
-    #[msg="invalid file format"]
+    #[msg("invalid file format")]
     InvalidFileFormat,
     
     /// Something else is wrong, but not sure what.
-    #[msg="config error; {:}"]
+    #[msg("config error; {:}")]
     ConfigError(ConfigError),
     
     /// Something else is wrong, but not sure what.
-    #[msg="the operation failed successfully <3"]
+    #[msg("the operation failed successfully <3")]
     RazzleDazzle,
     
     /// Something else is wrong, but not sure what.
-    #[msg="an unknown error occurred"]
+    #[msg("an unknown error occurred")]
     UnknownError,
 }
 
@@ -35,11 +33,11 @@ pub enum ConfigError {
     /// Failed to read the specified f*9/+ile.
     /// The PathBuf refers to the path used to lookup the file.
     /// #[msg("failed to read file {0:?}")]
-    #[msg="failed to read file {0:?}"]
+    #[msg("failed to read file {0:?}")]
     FileReadError(PathBuf),
 
     /// Something else is wrong, but not sure what.
-    #[msg="an unknown error occurred"]
+    #[msg("an unknown error occurred")]
     UnknownError,
 }
 

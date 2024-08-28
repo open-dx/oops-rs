@@ -1,17 +1,20 @@
-use quote::quote;
+use proc_macro::TokenStream;
+use proc_macro2::TokenStream as TokenStream2;
 
-//--
 use syn::DeriveInput;
-
 use syn::Data;
 use syn::DataEnum;
-
+use syn::Expr;
 use syn::Fields;
 use syn::FieldsUnnamed;
-
 use syn::Attribute;
 use syn::Ident;
 use syn::Meta;
+use syn::Variant;
+use syn::Token;
+use syn::punctuated::Punctuated;
+
+use quote::quote;
 
 //---
 /// Derives an Error-type for an enum of error variants.
@@ -26,8 +29,8 @@ use syn::Meta;
 /// }
 /// ```
 #[proc_macro_derive(Error, attributes(code, msg, tags))]
-pub fn derive_error(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let ast: DeriveInput = syn::parse(input).unwrap();
+pub fn derive_error(input: TokenStream) -> TokenStream {
+    let ast: DeriveInput = syn::parse(input).expect("Rust source code");
     
     let error_impl = match ast.data {
         // TODO
@@ -38,7 +41,7 @@ pub fn derive_error(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     };
     
     // Generate the impl block for the `ErrorCode` trait.
-    proc_macro2::TokenStream::from(error_impl).into()
+    error_impl.into()
 }
 
 /// Generates a token stream which implements `Error`, as well as
@@ -76,15 +79,22 @@ fn derive_error_from_enum(ident: Ident, data: &DataEnum) -> proc_macro2::TokenSt
     }
 }
 
+const DISPLAY_ATTR_KEY: &str = "msg";
+const DOCS_ATTR_KEY: &str = "doc";
+
 //---
 /// Generates a token stream for a match arm for message display.
-fn create_display_arm(root_ident: syn::Ident, variant: &syn::Variant) -> proc_macro2::TokenStream {
+fn create_display_arm(root_ident: Ident, variant: &Variant) -> TokenStream2 {
     let msg_text_fallback = variant.ident.to_string();
     
     // Attempt to get the msg attribute's value, the doc attribute value, or
     // fallback to the variant identy name.
-    let variant_msg = find_attr_value(&variant.attrs, "msg")
-        .or_else(|| find_attr_value(&variant.attrs, "doc"))
+    // 
+    // For now the "msg" key and "doc" key are interchangable. In the future
+    // we'll want to be able to tell the difference between the two and use
+    // the provided docs for additional Dx, where 
+    let variant_msg = find_attr_value(&variant.attrs, DISPLAY_ATTR_KEY)
+        .or_else(|| find_attr_value(&variant.attrs, DOCS_ATTR_KEY))
         .unwrap_or(msg_text_fallback);
     
     match &variant.fields {
@@ -119,32 +129,38 @@ fn create_tuple_match_arm(root_ident: syn::Ident, variant_ident: &syn::Ident, va
 /// Hint: The "doc" attribute is derived for 
 fn find_attr_value(attrs: &[Attribute], name: &str) -> Option<String> {
     for attr in attrs {
-        let attr_meta = attr.parse_meta();
-        if let Err(error) = attr_meta {
-            eprintln!("Couldn't parse meta attribute `{}`: {}", name, error);
-            continue;
-        }
-        
-        let attr_meta = attr_meta.unwrap();
-        match attr_meta {
+        match &attr.meta {
             Meta::Path(_) => {
                 // TODO!
                 continue;
             },
             Meta::List(list) => {
                 if list.path.is_ident(name) {
-                    if let Some(syn::NestedMeta::Lit(lit)) = list.nested.first() {
-                        if let syn::Lit::Str(lit) = lit {
-                            return Some(lit.value());
+                    // if let Some(syn::NestedMeta::Lit(lit)) = list.nested.first() {
+                    //     if let syn::Lit::Str(lit) = lit {
+                    //         return Some(lit.value());
+                    //     }
+                    // }
+                    let attribute_args = list.parse_args_with(Punctuated::<Expr, Token![,]>::parse_terminated).expect("attribute arguments");
+                    for arg in attribute_args {
+                        match arg {
+                            Expr::Lit(lit) => {
+                                if let syn::Lit::Str(lit) = lit.lit {
+                                    return Some(lit.value());
+                                }
+                            }
+                            _ => {
+                                panic!("Unsupported attribute value `{:?}`", arg);
+                            }
                         }
                     }
                 }
             },
             Meta::NameValue(name_value) => {
                 if name_value.path.is_ident(name) {
-                    if let syn::Lit::Str(lit) = name_value.lit {
-                        return Some(lit.value());
-                    }
+                    // if let syn::Lit::Str(lit) = name_value.lit {
+                    //     return Some(lit.value());
+                    // }
                 }
             },
         }
