@@ -1,5 +1,7 @@
 #![no_std]
 
+extern crate alloc;
+
 //--
 extern crate oops_core;
 pub use oops_core::*;

@@ -108,7 +108,7 @@ fn create_display_arm(root_ident: Ident, variant: &Variant) -> TokenStream2 {
 /// Generates a token stream for a match arm with no embedded values.
 fn create_unit_match_arm(root_ident: syn::Ident, variant_ident: &syn::Ident, variant_msg: &str) -> proc_macro2::TokenStream {
     quote! {
-        #root_ident::#variant_ident => format!(#variant_msg)
+        #root_ident::#variant_ident => alloc::format!(#variant_msg)
     }
 }
 
@@ -121,7 +121,7 @@ fn create_tuple_match_arm(root_ident: syn::Ident, variant_ident: &syn::Ident, va
         .map(|name| quote! { #name });
 
     quote! {
-        #root_ident::#variant_ident(#(#field_names),*) => format!(#variant_msg, #(#field_values),*)
+        #root_ident::#variant_ident(#(#field_names),*) => alloc::format!(#variant_msg, #(#field_values),*)
     }
 }
 
